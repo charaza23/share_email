@@ -1,44 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './Home.css';
 
-function Home() {
+function Home({ onLogout }) {
   const [inputCode, setInputCode] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchEmail = async () => {
-      try {
-        const response = await fetch(`/api/user/${inputCode}/email`);
-        if (!response.ok) {
-          throw new Error('Errore durante la richiesta');
-        }
-        const data = await response.json();
-        setEmail(data.email);
-        setError('');
-      } catch (error) {
-        setEmail('');
-        setError(error.message);
-      }
-    };
-
-    if (inputCode !== '') {
-      fetchEmail();
-    }
-  }, [inputCode]);
-
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
-    if (inputCode.trim() !== '') {
-      setInputCode(inputCode.trim());
+    try {
+      const response = await fetch(`/api/utente/${inputCode}/email`);
+      if (!response.ok) {
+        throw new Error('Errore durante la richiesta');
+      }
+      const data = await response.json();
+      setEmail(data.email);
+      setError('');
+    } catch (error) {
+      setEmail('');
+      setError(error.message);
     }
+  };
+
+  const handleLogout = () => {
+    // Implementa la logica per effettuare il logout sul server, se necessario
+
+    // Reindirizza l'utente alla pagina di login o registrazione
+    onLogout();
   };
 
   return (
     <div className={styles.container}>
-      <h1>QR Code Scanner</h1>
       <div className={styles['form-container']}>
-        <h2>Inserisci un codice</h2>
+        <h2>Inserisci ID</h2>
         <form onSubmit={handleFormSubmit}>
           <label htmlFor="inputCode">Codice:</label>
           <input
@@ -52,6 +46,7 @@ function Home() {
         </form>
         {email && <p>Email corrispondente: {email}</p>}
         {error && <p className={styles['error-message']}>{error}</p>}
+        <button onClick={handleLogout}>Logout</button>
       </div>
     </div>
   );

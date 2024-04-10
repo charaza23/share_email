@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import Home from './componenti/Home'; // Importa il componente Home.js
+import Login from './componenti/Login';
+import Registrazione from './componenti/Registrazione';
+import Home from './componenti/Home';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('login');
+
+  const handleLogin = () => {
+    setCurrentPage('home');
+  };
+
+  const handleRegistrazione = () => {
+    setCurrentPage('registrazione');
+  };
+
+  const handleLogout = () => {
+    setCurrentPage('login');
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Applicazione</h1>
-      </header>
-      <main>
-        <Home /> {/* Includi il componente Home.js */}
-      </main>
+      {currentPage === 'login' && <Login onRegistratiClick={handleRegistrazione} onLogin={handleLogin} />}
+      {currentPage === 'registrazione' && <Registrazione onLoginClick={handleLogin} />}
+      {currentPage === 'home' && <Home onLogout={handleLogout} />}
     </div>
   );
 }
